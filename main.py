@@ -1,21 +1,26 @@
-import streamlit as st  # Import necessary libraries
+import streamlit as st
 import matplotlib.pyplot as plt
 from fractions import Fraction
 
-#steps for the app!
-st.title("Welcome to Yousef's Fraction Visualizer App! 🍕")
-st.write("""
-## **Steps to Use This App:**
-1. **Pick a color** 🎨 – This will be used to highlight your selected fraction in the pie chart.
-2. **Select a fraction** 🔢 – Use the slider to choose a fraction of a whole pizza.
-3. **View the pie chart** 📊 – The chart will display the selected fraction and the remaining portion.
+# Set Page Title and Icon
+st.set_page_config(page_title="Yousef's Fraction Visualizer", page_icon="🍕")
+
+# App Title and Instructions
+st.title("🍕 Yousef's Fraction Visualizer App")
+st.markdown("""
+## **How to Use This App**
+1. **Pick a color** 🎨 – This color will highlight your selected fraction.
+2. **Choose a fraction** 🔢 – Use the slider to select a fraction of a pizza.
+3. **View the chart** 📊 – The pie chart displays your selection.
 """)
 
-color = st.color_picker("Pick A Color", "#00f900")  #variable for color
-st.write("The current color is", color) 
+# Color Picker
+color = st.color_picker("🎨 Pick a Highlight Color", "#00f900")
+st.write(f"**Current color:** `{color}`")
 
-fraction = st.select_slider( #variable for fraction selected
-    "Select a fraction",
+# Fraction Selection
+fraction = st.select_slider(
+    "🔢 Select a Fraction",
     options=[
         Fraction(1, 64),
         Fraction(1, 32),
@@ -26,14 +31,23 @@ fraction = st.select_slider( #variable for fraction selected
         Fraction(1, 1),
     ],
 )
+st.write(f"📊 **Selected Fraction:** `{fraction}`")
 
-st.write("Here is a pie chart of the fraction:", fraction)  #shows selected fraction
+# Pie Chart Data
+fraction_data = [fraction, 1 - fraction]
+labels = [f"🍕 Selected: {fraction}", f"🍕 Remaining: {1 - fraction}"]
 
-fraction_data = [fraction, 1 - fraction]  #stores fraction and remaining portion
-labels = [f"Selected Fraction: {fraction}", f"Remaining: {1 - fraction}"]
+# Plot the Pie Chart with Better Styling
+fig, ax = plt.subplots(figsize=(5, 5))  # Adjust figure size
+wedges, texts, autotexts = ax.pie(
+    fraction_data, 
+    labels=labels, 
+    autopct='%1.1f%%', 
+    startangle=90, 
+    colors=[color, "whitesmoke"],  # Highlight color & soft background
+    wedgeprops={"edgecolor": "black", "linewidth": 1},  # Add border
+    textprops={"fontsize": 12}  # Improve readability
+)
+ax.axis('equal')  # Keep the pie chart circular
 
-fig, ax = plt.subplots()
-ax.pie(fraction_data, labels=labels, autopct='%1.1f%%', startangle=90, colors=['grey', color])
-ax.axis('equal') 
-
-st.pyplot(fig) #show chart
+st.pyplot(fig)  # Display the chart
